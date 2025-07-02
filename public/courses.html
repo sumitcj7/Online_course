@@ -2,6 +2,66 @@
 <html>
 <head>
   <title>All Courses</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    #courseList {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .course-card {
+      background-color: #fff;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .course-card:hover {
+      transform: scale(1.01);
+    }
+
+    .course-card h3 {
+      margin-top: 0;
+      color: #4CAF50;
+    }
+
+    .course-card p {
+      margin: 8px 0;
+      color: #555;
+    }
+
+    .course-card button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .course-card button:hover {
+      background-color: #45a049;
+    }
+
+    em {
+      color: #888;
+    }
+  </style>
 </head>
 <body>
   <h2>Available Courses</h2>
@@ -11,13 +71,12 @@
     async function fetchCourses() {
       const res = await fetch('/api/courses');
       const courses = await res.json();
-
       const token = localStorage.getItem('token');
 
       let html = '';
       courses.forEach(course => {
         html += `
-          <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
+          <div class="course-card">
             <h3>${course.title}</h3>
             <p>${course.description}</p>
             <p><strong>Price:</strong> $${course.price}</p>
