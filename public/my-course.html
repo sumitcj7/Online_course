@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Enrolled Courses</title>
+</head>
+<body>
+  <h2>My Enrolled Courses</h2>
+  <div id="myCoursesList"></div>
+
+  <script>
+    async function fetchMyCourses() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in first.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const res = await fetch('/api/courses/my-courses', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+       console.log("API Response:", data); 
+
+      if (!res.ok) {
+        alert(data.message || 'Failed to fetch courses');
+        return;
+      }
+
+      if (data.length === 0) {
+        document.getElementById('myCoursesList').innerHTML = '<p>You are not enrolled in any courses.</p>';
+        return;
+      }
+
+      let html = '';
+      data.forEach(course => {
+        html += `
+          <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <p><strong>Instructor:</strong> ${course.instructor.name}</p>
+            <p><strong>Price:</strong> $${course.price}</p>
+          </div>
+        `;
+      });
+
+      document.getElementById('myCoursesList').innerHTML = html;
+    }
+
+    fetchMyCourses();
+  </script>
+</body>
+</html>

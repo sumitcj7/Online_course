@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Courses</title>
+</head>
+<body>
+  <h2>Available Courses</h2>
+  <div id="courseList"></div>
+
+  <script>
+    async function fetchCourses() {
+      const res = await fetch('/api/courses');
+      const courses = await res.json();
+
+      const token = localStorage.getItem('token');
+
+      let html = '';
+      courses.forEach(course => {
+        html += `
+          <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px">
+            <h3>${course.title}</h3>
+            <p>${course.description}</p>
+            <p><strong>Price:</strong> $${course.price}</p>
+            <p><strong>Instructor:</strong> ${course.instructor.name}</p>
+            ${
+              token
+                ? `<button onclick="enroll('${course._id}')">Enroll</button>`
+                : '<p><em>Login to enroll</em></p>'
+            }
+          </div>
+        `;
+      });
+
+      document.getElementById('courseList').innerHTML = html;
+    }
+
+    async function enroll(courseId) {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in to enroll.');
+        return;
+      }
+
+      const res = await fetch(`/api/courses/${courseId}/enroll`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        alert('Enrolled successfully!');
+      } else {
+        alert(data.message || 'Enrollment failed');
+      }
+    }
+
+    fetchCourses();
+  </script>
+</body>
+</html>

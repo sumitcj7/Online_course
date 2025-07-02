@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add New Course</title>
+</head>
+<body>
+  <h2>Create a New Course</h2>
+  <form id="courseForm">
+    <input type="text" id="title" placeholder="Title" required><br><br>
+    <textarea id="description" placeholder="Description" required></textarea><br><br>
+    <input type="number" id="price" placeholder="Price" required><br><br>
+    <input type="text" id="category" placeholder="Category"><br><br>
+    <select id="level">
+      <option value="beginner">Beginner</option>
+      <option value="intermediate">Intermediate</option>
+      <option value="advanced">Advanced</option>
+    </select><br><br>
+    <button type="submit">Create Course</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('courseForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Please log in as an instructor');
+        return;
+      }
+
+      const courseData = {
+        title: document.getElementById('title').value,
+        description: document.getElementById('description').value,
+        price: document.getElementById('price').value,
+        category: document.getElementById('category').value,
+        level: document.getElementById('level').value
+      };
+
+      const res = await fetch('/api/courses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(courseData)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Course created successfully!');
+        window.location.href = 'courses.html';
+      } else {
+        alert(data.message || 'Failed to create course');
+      }
+    });
+  </script>
+</body>
+</html>
